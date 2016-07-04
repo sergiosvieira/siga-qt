@@ -1,0 +1,3 @@
+[submodule "lib/igloo"]
+	path = lib/igloo
+	url = git@git.funceme.br:siga/igloo.git
