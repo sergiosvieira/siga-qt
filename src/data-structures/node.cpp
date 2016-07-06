@@ -20,6 +20,7 @@
  ****************************************************************************/
 
 #include "../../include/data-structures/node.h"
+#include <stdio.h>
 
 using namespace SIGA::DS;
 using namespace std;

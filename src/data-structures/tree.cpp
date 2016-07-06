@@ -21,11 +21,11 @@
 
 #include "../../include/data-structures/tree.h"
 #include <iostream>
+#include <stdio.h>
 
 using namespace SIGA::DS;
 using namespace std;
 
-#define __DEBUG__
 
 shared_ptr<Node> Tree::find(int label)
 {
@@ -57,6 +57,7 @@ shared_ptr<Node> Tree::add(int label,
             }
             current->setNext(m_last);
         }
+        return m_last;
     }
     return nullptr;
 }

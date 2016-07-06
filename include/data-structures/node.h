@@ -26,7 +26,7 @@
 #include <vector>
 
 /** Data Structures **/
-#include "sparse-matrix.h"
+//#include "sparse-matrix.h"
 
 #include <memory>
 
@@ -46,7 +46,7 @@ namespace SIGA
         /** Predefined types **/
         using VectorOfInt = vector<int>;
         // Float pointer was choosen to sparse matrix no need store -999.0 values
-        using PtrFloatOfSparseMatrix = SparseMatrix<shared_ptr<float>>;
+        //using PtrFloatOfSparseMatrix = SparseMatrix<shared_ptr<float>>;
         /*!
          * \brief The Node class
          * Store important node's variables like: label, identifiers, values and next node
@@ -104,8 +104,8 @@ namespace SIGA
             }
         protected:
             int m_label;
-            VectorOfInt m_ids;
-            PtrFloatOfSparseMatrix m_values;
+            //VectorOfInt m_ids;
+            //PtrFloatOfSparseMatrix m_values;
             shared_ptr<Node> m_next = nullptr;
             shared_ptr<Node> m_child = nullptr;
         };
