@@ -43,6 +43,7 @@ namespace SIGA
     {
         /** Predefined types **/
         using VectorOfInt = vector<int>;
+        // Float pointer was choosen to sparse matrix no need store -999.0 values
         using PtrFloatOfSparseMatrix = SparseMatrix<float*>;
         /*!
          * \brief The Node class
@@ -52,13 +53,8 @@ namespace SIGA
         class Node
         {
         public:
-            /*!
-             * \brief Default Constructor
-             * \param label
-             * \param next
-             */
             Node(int label,
-                 Node* next = nullptr);
+                 Node* node = nullptr);
             /*!
              * \brief Value's identifiers
              * \return Vector of Integers
@@ -88,15 +84,50 @@ namespace SIGA
              * \return Float Pointer
              */
             inline float* getValue(long row,
-                                   long col) const
+                                   long col)
             {
-                return m_matrix[row][col];
+                return m_values[row][col];
             }
             /*!
              * \brief Values container size
              * \return Integer Value (Rows * Cols of sparse matrix)
              */
             int valuesSize();
+            /*!
+             * \brief Set pointer to the previous node
+             * \param previous
+             */
+            void setPrevious(Node &previous);
+            /*!
+             * \brief Set pointer to the next node
+             * \param next
+             */
+            void setNext(Node &next);
+            /*!
+             * \brief Set pointer to the child
+             * \param child
+             */
+            void setChild(Node &child);
+            /*!
+             * \brief Pointer to parent node
+             * \return
+             */
+            Node *parent() const;
+            /*!
+             * \brief Pointer to previous node
+             * \return
+             */
+            Node *previous() const;
+            /*!
+             * \brief Pointer to next node
+             * \return
+             */
+            Node *next() const;
+            /*!
+             * \brief Pointer to child node
+             * \return
+             */
+            Node *child() const;
             /*!
              * \brief Operator == overloading
              * \param other
@@ -113,13 +144,16 @@ namespace SIGA
              */
             bool operator<(const Node& other) const
             {
-                return (label < other.label());
+                return (m_label < other.label());
             }
         protected:
             int m_label;
             VectorOfInt m_ids;
             PtrFloatOfSparseMatrix m_values;
+            Node* m_parent = nullptr;
+            Node* m_previous = nullptr;
             Node* m_next = nullptr;
+            Node* m_child = nullptr;
         };
     }
 }

@@ -23,11 +23,30 @@
 
 /** Public Methods **/
 
+using namespace SIGA::DS;
+
 Node::Node(int label,
-           Node *next)
+           Node *node)
 {
     m_label = label;
-    m_next = next;
+    if (node != nullptr)
+    {
+        m_parent = node;
+        if (node->child() == nullptr)
+        {
+            node->setChild(*this);
+        }
+        else
+        {
+            Node* current = node->child();
+            while (current->next() != nullptr)
+            {
+                current = current->next();
+            }
+            current->setNext(*this);
+            m_previous = current;
+        }
+    }
 }
 
 VectorOfInt &Node::identifiers()
@@ -35,14 +54,47 @@ VectorOfInt &Node::identifiers()
     return m_ids;
 }
 
-void Node::value(long row,
-                 long col,
-                 float *a_value)
-{
-    m_matrix[row][col] = a_value;
-}
-
+/*!
+ * Todo: you must test it
+ */
 int Node::valuesSize()
 {
-    return m_matrix.rows() * m_matrix.cols();
+    return m_values.rows() * m_values.cols();
 }
+
+
+void Node::setPrevious(Node &previous)
+{
+    m_previous = &previous;
+}
+
+void Node::setNext(Node &next)
+{
+    m_next = &next;
+}
+
+void Node::setChild(Node &child)
+{
+    m_child = &child;
+}
+
+Node *Node::parent() const
+{
+    return m_parent;
+}
+
+Node *Node::previous() const
+{
+    return m_previous;
+}
+
+Node *Node::next() const
+{
+    return m_next;
+}
+
+Node *Node::child() const
+{
+    return m_child;
+}
+
