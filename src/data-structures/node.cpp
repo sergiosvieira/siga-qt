@@ -50,3 +50,23 @@ shared_ptr<Node> Node::child()
     return m_child;
 }
 
+shared_ptr<Node> Node::parent()
+{
+    return m_parent.lock();
+}
+
+void Node::setParent(shared_ptr<Node> parent)
+{
+    m_parent = parent;
+}
+
+shared_ptr<Node> Node::previous()
+{
+    return m_previous.lock();
+}
+
+void Node::setPrevious(shared_ptr<Node> previous)
+{
+    m_previous = previous;
+}
+

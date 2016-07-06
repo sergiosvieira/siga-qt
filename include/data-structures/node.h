@@ -25,9 +25,6 @@
 /** STL **/
 #include <vector>
 
-/** Data Structures **/
-//#include "sparse-matrix.h"
-
 #include <memory>
 
 using namespace std;
@@ -43,10 +40,6 @@ namespace SIGA
      */
     namespace DS
     {
-        /** Predefined types **/
-        using VectorOfInt = vector<int>;
-        // Float pointer was choosen to sparse matrix no need store -999.0 values
-        //using PtrFloatOfSparseMatrix = SparseMatrix<shared_ptr<float>>;
         /*!
          * \brief The Node class
          * Store important node's variables like: label, identifiers, values and next node
@@ -85,6 +78,27 @@ namespace SIGA
              */
             shared_ptr<Node> child();
             /*!
+             * \brief Returns smart pointer to its parent
+             * \return
+             */
+            shared_ptr<Node> parent();
+            /*!
+             * \brief Set smart pointer to its parent
+             * \param parent
+             */
+            void setParent(shared_ptr<Node> parent);
+            /*!
+             * \brief Returns smart pointer to its previous node
+             * \return
+             */
+            shared_ptr<Node> previous();
+            /*!
+             * \brief Set smart pointer to its previous node
+             * \param previous
+             */
+            void setPrevious(shared_ptr<Node> previous);
+
+            /*!
              * \brief Operator == overloading
              * \param other
              * \return Boolean Value
@@ -101,11 +115,11 @@ namespace SIGA
             bool operator<(const shared_ptr<Node>& other) const
             {
                 return (m_label < other->label());
-            }
+            }            
         protected:
             int m_label;
-            //VectorOfInt m_ids;
-            //PtrFloatOfSparseMatrix m_values;
+            weak_ptr<Node> m_parent;
+            weak_ptr<Node> m_previous;
             shared_ptr<Node> m_next = nullptr;
             shared_ptr<Node> m_child = nullptr;
         };

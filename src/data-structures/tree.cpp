@@ -47,6 +47,7 @@ shared_ptr<Node> Tree::add(int label,
         if (parent->child() == nullptr)
         {
             parent->setChild(m_last);
+            m_last->setParent(parent);
         }
         else
         {
@@ -56,6 +57,7 @@ shared_ptr<Node> Tree::add(int label,
                 current = current->next();
             }
             current->setNext(m_last);
+            m_last->setPrevious(current);
         }
         return m_last;
     }
