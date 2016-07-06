@@ -21,79 +21,30 @@
 
 #include "../../include/data-structures/node.h"
 
-/** Public Methods **/
-
 using namespace SIGA::DS;
+using namespace std;
 
-Node::Node(int label,
-           Node *node)
+/** Public Methods **/
+Node::Node(int label): m_label(label)
 {
-    m_label = label;
-    if (node != nullptr)
-    {
-        m_parent = node;
-        if (node->child() == nullptr)
-        {
-            node->setChild(*this);
-        }
-        else
-        {
-            Node* current = node->child();
-            while (current->next() != nullptr)
-            {
-                current = current->next();
-            }
-            current->setNext(*this);
-            m_previous = current;
-        }
-    }
 }
 
-VectorOfInt &Node::identifiers()
+void Node::setNext(shared_ptr<Node> next)
 {
-    return m_ids;
+    m_next = next;
 }
 
-/*!
- * Todo: you must test it
- */
-int Node::valuesSize()
+void Node::setChild(shared_ptr<Node> child)
 {
-    return m_values.rows() * m_values.cols();
+    m_child = child;
 }
 
-
-void Node::setPrevious(Node &previous)
-{
-    m_previous = &previous;
-}
-
-void Node::setNext(Node &next)
-{
-    m_next = &next;
-}
-
-void Node::setChild(Node &child)
-{
-    m_child = &child;
-}
-
-Node *Node::parent() const
-{
-    return m_parent;
-}
-
-Node *Node::previous() const
-{
-    return m_previous;
-}
-
-Node *Node::next() const
+shared_ptr<Node> Node::next()
 {
     return m_next;
 }
 
-Node *Node::child() const
+shared_ptr<Node> Node::child()
 {
     return m_child;
 }

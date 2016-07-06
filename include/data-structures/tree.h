@@ -44,15 +44,23 @@ namespace SIGA
         {
         public:
             /*!
-             * \brief Find specified label
+             * \brief find
              * \param label
-             * \return Node Pointer
+             * \return
              */
-            Node* find(int label);
+            shared_ptr<Node> find(int label);
+            /*!
+             * \brief add
+             * \param label
+             * \param parent
+             * \return
+             */
+            shared_ptr<Node> add(int label,
+                                 shared_ptr<Node> parent = nullptr);
         protected:
-            Node* m_root = nullptr;
-            Node* m_first = nullptr;
-            Node* m_last = nullptr;
+            shared_ptr<Node> m_root = nullptr;
+            shared_ptr<Node> m_first = nullptr;
+            shared_ptr<Node> m_last = nullptr;
         };
     }
 }

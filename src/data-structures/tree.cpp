@@ -20,10 +20,43 @@
  ****************************************************************************/
 
 #include "../../include/data-structures/tree.h"
+#include <iostream>
 
 using namespace SIGA::DS;
+using namespace std;
 
-Node *Tree::find(int label)
+#define __DEBUG__
+
+shared_ptr<Node> Tree::find(int label)
 {
+    return nullptr;
+}
+
+shared_ptr<Node> Tree::add(int label,
+                           shared_ptr<Node> parent)
+{
+    if (m_root == nullptr)
+    {
+        m_root = make_shared<Node>(label);
+        m_first = m_last = m_root;
+        return m_root;
+    }
+    if (parent != nullptr)
+    {
+        m_last = make_shared<Node>(label);
+        if (parent->child() == nullptr)
+        {
+            parent->setChild(m_last);
+        }
+        else
+        {
+            shared_ptr<Node> current = parent->child();
+            while(current->next() != nullptr)
+            {
+                current = current->next();
+            }
+            current->setNext(m_last);
+        }
+    }
     return nullptr;
 }

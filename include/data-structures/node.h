@@ -28,6 +28,8 @@
 /** Data Structures **/
 #include "sparse-matrix.h"
 
+#include <memory>
+
 using namespace std;
 
 
@@ -44,7 +46,7 @@ namespace SIGA
         /** Predefined types **/
         using VectorOfInt = vector<int>;
         // Float pointer was choosen to sparse matrix no need store -999.0 values
-        using PtrFloatOfSparseMatrix = SparseMatrix<float*>;
+        using PtrFloatOfSparseMatrix = SparseMatrix<shared_ptr<float>>;
         /*!
          * \brief The Node class
          * Store important node's variables like: label, identifiers, values and next node
@@ -53,13 +55,7 @@ namespace SIGA
         class Node
         {
         public:
-            Node(int label,
-                 Node* node = nullptr);
-            /*!
-             * \brief Value's identifiers
-             * \return Vector of Integers
-             */
-            VectorOfInt& identifiers();
+            Node(int label);
             /*!
              * \brief Node's label
              * \return Integer Value
@@ -69,91 +65,49 @@ namespace SIGA
                 return m_label;
             }
             /*!
-             * \brief Set value of the specified (row, col) in sparse matrix
-             * \param row
-             * \param col
-             * \param value
-             */
-            void setValue(long row,
-                          long col,
-                          float* value = nullptr);
-            /*!
-             * \brief Get value of the specified (row, col) in sparse matrix
-             * \param row
-             * \param col
-             * \return Float Pointer
-             */
-            inline float* getValue(long row,
-                                   long col)
-            {
-                return m_values[row][col];
-            }
-            /*!
-             * \brief Values container size
-             * \return Integer Value (Rows * Cols of sparse matrix)
-             */
-            int valuesSize();
-            /*!
-             * \brief Set pointer to the previous node
-             * \param previous
-             */
-            void setPrevious(Node &previous);
-            /*!
-             * \brief Set pointer to the next node
+             * \brief Set smart pointer to its next node
              * \param next
              */
-            void setNext(Node &next);
+            void setNext(shared_ptr<Node> next);
             /*!
-             * \brief Set pointer to the child
+             * \brief Set smart pointer to its child
              * \param child
              */
-            void setChild(Node &child);
-            /*!
-             * \brief Pointer to parent node
-             * \return
-             */
-            Node *parent() const;
-            /*!
-             * \brief Pointer to previous node
-             * \return
-             */
-            Node *previous() const;
+            void setChild(shared_ptr<Node> child);
             /*!
              * \brief Pointer to next node
              * \return
              */
-            Node *next() const;
+            shared_ptr<Node> next();
             /*!
              * \brief Pointer to child node
              * \return
              */
-            Node *child() const;
+            shared_ptr<Node> child();
             /*!
              * \brief Operator == overloading
              * \param other
              * \return Boolean Value
              */
-            bool operator==(const Node& other) const
+            bool operator==(const shared_ptr<Node>& other) const
             {
-                return (m_label == other.label());
+                return (m_label == other->label());
             }
             /*!
              * \brief Operator < overloading
              * \param other
              * \return Boolean Value
              */
-            bool operator<(const Node& other) const
+            bool operator<(const shared_ptr<Node>& other) const
             {
-                return (m_label < other.label());
+                return (m_label < other->label());
             }
         protected:
             int m_label;
             VectorOfInt m_ids;
             PtrFloatOfSparseMatrix m_values;
-            Node* m_parent = nullptr;
-            Node* m_previous = nullptr;
-            Node* m_next = nullptr;
-            Node* m_child = nullptr;
+            shared_ptr<Node> m_next = nullptr;
+            shared_ptr<Node> m_child = nullptr;
         };
     }
 }
