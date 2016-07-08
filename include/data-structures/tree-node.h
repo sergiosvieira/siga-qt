@@ -1,0 +1,99 @@
+#ifndef __TREE_NODE__
+#define __TREE_NODE__
+
+/** STL **/
+#include <vector>
+
+#include <memory> // smart pointer
+
+#include "sparse-matrix.h"
+
+using namespace std;
+using namespace SIGA::DS;
+
+namespace SIGA
+{
+    namespace DS
+    {
+        using SPVectorOfInt = shared_ptr<vector<int>>;
+        /*!
+         * \brief The TreeNode class
+         */
+        class TreeNode
+        {
+        public:
+            TreeNode();
+            /*!
+             * \brief Default constructor with label
+             * \param label
+             */
+            TreeNode(int label);
+            /*!
+             * \brief Get node value
+             * \param row
+             * \param col
+             * \param a_value
+             */
+            void setValue(long row,
+                       long col,
+                       shared_ptr<float> value);
+            /*!
+             * \brief Returns current value of specified row, col
+             * \param row
+             * \param col
+             * \return Shared Pointer to Float
+             */
+            float value(long row,
+                        long col);
+            /*!
+             * \brief Sum value of (row, col) with passed value
+             * \param row
+             * \param col
+             * \param value
+             */
+            void sum(long row,
+                     long col,
+                     float value);
+            /*!
+             * \brief Checks if specified value of (row, col) is empty
+             * \param row
+             * \param col
+             * \return
+             */
+            bool isEmpty(long row,
+                         long col);
+            /*!
+             * \brief Returns size of the sparse matrix of the Tree node
+             * \return Integer Value
+             */
+            int size();
+            int label() const;
+            void destroyValues();
+            /** Overloading Operators **/
+            bool operator==(const TreeNode& other) const
+            {
+                return m_label == other.m_label;
+            }
+            bool operator <(const TreeNode& other) const
+            {
+                return m_label < other.m_label;
+            }
+        protected:
+            int m_label = 0;
+            SPVectorOfInt m_stations;
+            SparseMatrix<shared_ptr<float>> m_matrix;
+        };
+        /** find label **/
+        struct find_label : std::unary_function<TreeNode, bool>
+        {
+            int m_label;
+            find_label(int label): m_label(label){};
+            bool operator()(TreeNode const& treeNode) const
+            {
+                return treeNode.label() == m_label;
+            }
+        };
+    }
+}
+
+#endif // __TREE_NODE__
