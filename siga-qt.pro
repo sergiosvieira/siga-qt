@@ -16,13 +16,13 @@ HEADERS += include/data-structures/tree.h \
            include/date/cdatecalc.h \
            include/date/ctime.h \
            include/date/ctimestamp.h \
-    include/data-structures/tree-node.h
+           include/data-structures/tree-node.h
 
 SOURCES += src/data-structures/time-serie-tree.cpp \
            src/date/cdate.cpp \
            src/date/cdatecalc.cpp \
            src/date/ctime.cpp \
-           src/date/ctimestamp.cpp \
-    src/data-structures/tree-node.cpp
+           src/date/ctimestamp.cpp \           
+           src/data-structures/tree-node.cpp
 
 include(test.pro)

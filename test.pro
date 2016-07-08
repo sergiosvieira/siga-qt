@@ -7,4 +7,4 @@ TARGET = tree_test
 INCLUDEPATH += lib/igloo
 
 # Input
-SOURCES += test/tree_tests.cpp
+SOURCES += test/sparse-matrix-tests.cpp
