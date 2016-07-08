@@ -3,8 +3,9 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET = tree_test
-INCLUDEPATH += lib/igloo
+TARGET = sparse-matrix-tests
+INCLUDEPATH += ../../include \
+               ../../lib/igloo
 
 # Input
-SOURCES += test/sparse-matrix-tests.cpp
+SOURCES += sparse-matrix-tests.cpp

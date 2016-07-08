@@ -35,13 +35,13 @@ namespace SIGA
              * \param a_value
              */
             void setValue(long row,
-                       long col,
-                       shared_ptr<float> value);
+                          long col,
+                          shared_ptr<float> value);
             /*!
              * \brief Returns current value of specified row, col
              * \param row
              * \param col
-             * \return Shared Pointer to Float
+             * \return Float (When it not exists it returns -999.f)
              */
             float value(long row,
                         long col);
@@ -67,12 +67,15 @@ namespace SIGA
              * \return Integer Value
              */
             int size();
+            /*!
+             * \brief Label of Node
+             * \return Integer Value
+             */
             int label() const;
-            void destroyValues();
             /** Overloading Operators **/
             bool operator==(const TreeNode& other) const
             {
-                return m_label == other.m_label;
+                return this == &other;
             }
             bool operator <(const TreeNode& other) const
             {

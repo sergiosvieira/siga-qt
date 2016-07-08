@@ -58,15 +58,3 @@ int TreeNode::label() const
 {
     return m_label;
 }
-
-void TreeNode::destroyValues()
-{
-    for (auto matrixKeyValue: m_matrix)
-    {
-        std::map<long, shared_ptr<float>> mapped = matrixKeyValue.second;
-        for (auto mapKeyValue: mapped)
-        {
-            mapKeyValue.second = nullptr;
-        }
-    }
-}

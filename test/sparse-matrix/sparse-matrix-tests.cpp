@@ -1,5 +1,5 @@
 #include <igloo/igloo_alt.h>
-#include "../../include/data-structures/sparse-matrix.h"
+#include <data-structures/sparse-matrix.h>
 
 using namespace std;
 using namespace igloo;
