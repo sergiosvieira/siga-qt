@@ -124,7 +124,6 @@ namespace SIGA
                             int a_daysInMonth,
                             HourFunction a_hourFunction = nullptr);
             void appendHours(TreeNodeIterator& a_dayIt);
-            void destroyValues();
             void updateNodeValue(TreeNode* node,
                                  const float& value,
                                  const int& stationIndex);
