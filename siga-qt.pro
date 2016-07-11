@@ -13,6 +13,8 @@ Debug:DESTDIR = build
 HEADERS += include/data-structures/tree.h \
            include/data-structures/sparse-matrix.h \
            include/data-structures/time-serie-tree.h \
+           #include/converter/siga-converter.cpp \
+           include/parsers/csv_parser.hpp \
            include/date/cdate.h \
            include/date/cdatecalc.h \
            include/date/ctime.h \
@@ -20,6 +22,8 @@ HEADERS += include/data-structures/tree.h \
            include/data-structures/tree-node.h
 
 SOURCES += src/data-structures/time-serie-tree.cpp \
+           #src/converter/siga-converter.cpp \
+           src/parsers/csv_parser.cpp \
            src/date/cdate.cpp \
            src/date/cdatecalc.cpp \
            src/date/ctime.cpp \
