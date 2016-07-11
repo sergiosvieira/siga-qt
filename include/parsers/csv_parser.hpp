@@ -95,13 +95,13 @@ typedef enum
  *
  * It deallocates the pointer only if it is not null
  */
-#define CSV_PARSER_FREE_BUFFER_PTR(ptr)	\
-if (ptr != NULL)						\
-{										\
-	free(ptr);							\
-										\
-	ptr = NULL;							\
-}
+//#define CSV_PARSER_FREE_BUFFER_PTR(ptr)	\
+//if (ptr != NULL)						\
+//{										\
+//    free(ptr);							\
+//                                        \
+//    ptr = NULL;							\
+//}
 
 #define CSV_PARSER_DELETE_PTR(ptr)	\
 if (ptr != nullptr)					\
@@ -206,15 +206,14 @@ public :
 				   enclosed_length(0U),    	escaped_length(1U),
 				   field_term_length(1U),  	line_term_length(1U),
 				   ignore_num_lines(0U),   	record_count(0U),
-				   input_fp(NULL),		   	input_filename(NULL),
+                   input_fp(NULL),		   	/*input_filename(NULL),*/
 				   enclosure_type(ENCLOSURE_NONE),
 				   more_rows(false),
 				   field_term_char_vector(nullptr),
 				   field_term_char_vector_length(0x00),
 				   m_comments_symbols(nullptr),
 				   m_comments_symbols_length(0x00)
-	{
-		int a = 0;
+	{		
 	}
 
 	/**
@@ -229,11 +228,7 @@ public :
 	~csv_parser()
 	{
 		CSV_PARSER_FREE_FILE_PTR(input_fp);
-
-		CSV_PARSER_FREE_BUFFER_PTR(input_filename);
-
 		CSV_PARSER_DELETE_PTR(field_term_char_vector);
-
 		CSV_PARSER_DELETE_BUFFER_PTR(m_comments_symbols, m_comments_symbols_length);
 	}
 
@@ -408,7 +403,8 @@ private :
 	 * @param[out] buffer_len A pointer to an integer storing the length of the buffer.
 	 * @return void
 	 */
-	void _read_single_line(char ** buffer, unsigned int * buffer_len);
+    //void _read_single_line(char ** buffer, unsigned int * buffer_len);
+    void _read_single_line(std::string& buffer);
 
 	/**
 	 * Extracts the fields without enclosures
@@ -601,7 +597,9 @@ protected :
 	 *
 	 * @var input_filename
 	 */
-	char * input_filename;
+    //char * input_filename;
+    std::string input_filename;
+
 
 	/**
 	 * Mode in which the CSV file will be parsed

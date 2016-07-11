@@ -1,6 +1,6 @@
 
 /* INCLUDING HEADER FILES */
-#include "../include/csv_parser.hpp"
+#include "../../include/parsers/csv_parser.hpp"
 
 
 /* BEGIN DEFINITION FOR PUBLIC METHODS */
@@ -42,20 +42,20 @@ bool csv_parser::reset(const char * input_file)
 		return false;
 	}
 
-	CSV_PARSER_FREE_BUFFER_PTR(input_filename)
-	input_filename = (char *)calloc(filename_length + 1, sizeof(char));
+//	CSV_PARSER_FREE_BUFFER_PTR(input_filename)
+//	input_filename = (char *)calloc(filename_length + 1, sizeof(char));
 
-	if (input_filename == NULL)
-	{
-		fprintf(stderr, "Fatal error : unable to allocate memory for file name buffer %s\n", input_file);
+//	if (input_filename == NULL)
+//	{
+//		fprintf(stderr, "Fatal error : unable to allocate memory for file name buffer %s\n", input_file);
 
-		return false;
-	}
+//		return false;
+//	}
 
-	memset(input_filename, 0, filename_length + 1);
+//	memset(input_filename, 0, filename_length + 1);
 
-	strcpy(input_filename, input_file);
-
+//	strcpy(input_filename, input_file);
+    input_filename = std::string(input_file);
 	CSV_PARSER_FREE_FILE_PTR(input_fp);
 
 	input_fp = fopen(input_file, "r");
@@ -64,7 +64,7 @@ bool csv_parser::reset(const char * input_file)
 	{
 		fprintf(stderr, "Fatal error : unable to open input file %s\n", input_file);
 
-		CSV_PARSER_FREE_BUFFER_PTR(input_filename);
+        //CSV_PARSER_FREE_BUFFER_PTR(input_filename);
 
 		return false;
 	}
@@ -95,26 +95,26 @@ bool csv_parser::init(const char * input_file)
 		return false;
 	}
 
-	input_filename = (char *) malloc(filename_length + 1);
+//	input_filename = (char *) malloc(filename_length + 1);
 
-	if (input_filename == NULL)
-	{
-		fprintf(stderr, "Fatal error : unable to allocate memory for file name buffer %s\n", input_file);
+//	if (input_filename == NULL)
+//	{
+//		fprintf(stderr, "Fatal error : unable to allocate memory for file name buffer %s\n", input_file);
 
-		return false;
-	}
+//		return false;
+//	}
 
-	memset(input_filename, 0, filename_length + 1);
+//	memset(input_filename, 0, filename_length + 1);
 
-	strcpy(input_filename, input_file);
-
+//	strcpy(input_filename, input_file);
+    input_filename = std::string(input_file);
 	input_fp = fopen(input_file, "r");
 
 	if (input_fp == NULL)
 	{
 		fprintf(stderr, "Fatal error : unable to open input file %s\n", input_file);
 
-		CSV_PARSER_FREE_BUFFER_PTR(input_filename);
+        //CSV_PARSER_FREE_BUFFER_PTR(input_filename);
 
 		return false;
 	}
@@ -228,16 +228,24 @@ csv_row csv_parser::get_row(void)
 	unsigned int line_length = 0U;
 
 	/* Character array buffer for the current record */
-	char * line = NULL;
+    //char * line = NULL;
+    std::string line = "";
 
 	/* Grab one record */
-	_read_single_line(&line, &line_length);
+//	_read_single_line(&line, &line_length);
+    _read_single_line(line);
+    if (line.find('\n') == string::npos
+        && line.size() > 0)
+    {
+        line += "\n";
+    }
+    line_length = line.size();
 	fpos_t currentPosition = ftell(input_fp);
-	if (line != NULL)
+    if (line.size() != 0)
 	{
 		for (int i = 0; i < m_comments_symbols_length; ++i)
 		{
-			if (strstr(line, m_comments_symbols[i]))
+            if (strstr(line.c_str(), m_comments_symbols[i]))
 			{
 				return current_row;
 			}
@@ -248,24 +256,24 @@ csv_row csv_parser::get_row(void)
 	switch(enclosure_type)
 	{
 		case ENCLOSURE_NONE : 	 /* The fields are not enclosed by any character */
-			_get_fields_without_enclosure(&current_row, line, &line_length);
+            _get_fields_without_enclosure(&current_row, line.c_str(), &line_length);
 		break;
 
 		case ENCLOSURE_REQUIRED : /* The fields are enclosed by a character */
-			_get_fields_with_enclosure(&current_row, line, &line_length);
+            _get_fields_with_enclosure(&current_row, line.c_str(), &line_length);
 		break;
 
 		case ENCLOSURE_OPTIONAL : /* The fields may or may not be enclosed */
-			_get_fields_with_optional_enclosure(&current_row, line, &line_length);
+            _get_fields_with_optional_enclosure(&current_row, line.c_str(), &line_length);
 		break;
 
 		default :
-			_get_fields_with_optional_enclosure(&current_row, line, &line_length);
+            _get_fields_with_optional_enclosure(&current_row, line.c_str(), &line_length);
 		break;
 	}
 
 	/* Deallocate the current buffer */
-	CSV_PARSER_FREE_BUFFER_PTR(line);
+    //CSV_PARSER_FREE_BUFFER_PTR(line);
 
 	/* Keeps track of how many times this has method has been called */
 	record_count++;
@@ -293,21 +301,30 @@ void csv_parser::_skip_lines(void)
 	record_count = 0U;
 }
 
-void csv_parser::_get_fields_without_enclosure(csv_row_ptr row, const char * line, const unsigned int * line_length)
+void csv_parser::_get_fields_without_enclosure(csv_row_ptr row,
+                                               const char * line,
+                                               const unsigned int * line_length)
 {
-	char * field = NULL;
+//	char * field = NULL;
+    string field = "";
 
-	if (*line_length > 0)
+    if (*line_length > 0
+        && line[0] != '\n')
 	{
-		field = (char *) malloc(*line_length);
+//		field = (char *) malloc(*line_length);
 
-		memset(field, 0, *line_length);
+//		memset(field, 0, *line_length);
 
 		register unsigned int field_start   = 0U;
 		register unsigned int field_end     = 0U;
 		register unsigned int char_pos 		= 0U;
 
-		while(char_pos < *line_length)
+        if (*line_length == 1)
+        {
+            field = std::string(line);
+            row->push_back(field);
+        }
+        else while(char_pos < *line_length)
 		{
 			char curr_char = line[char_pos];
 
@@ -321,14 +338,15 @@ void csv_parser::_get_fields_without_enclosure(csv_row_ptr row, const char * lin
 				const unsigned int field_width = field_end - field_start;
 
 				/* Copy exactly field_width bytes from field_starts_at to field */
-				memcpy(field, field_starts_at, field_width);
+                //memcpy(field, field_starts_at, field_width);
+                field = std::string(field_starts_at, field_width);
 
 				/* This must be a null-terminated character array */
-				field[field_width] = 0x00;
+                //field[field_width] = 0x00;
 
-				string field_string_obj = field;
+                //string field_string_obj = field;
 
-				row->push_back(field_string_obj);
+                row->push_back(field);
 
 				/* This is the starting point of the next field */
 				field_start = char_pos + 1;
@@ -343,14 +361,15 @@ void csv_parser::_get_fields_without_enclosure(csv_row_ptr row, const char * lin
 				const unsigned int field_width = field_end - field_start;
 
 				/* Copy exactly field_width bytes from field_starts_at to field */
-				memcpy(field, field_starts_at, field_width);
+                //memcpy(field, field_starts_at, field_width);
+                field = std::string(field_starts_at, field_width);
 
 				/* This must be a null-terminated character array */
-				field[field_width] = 0x00;
+                //field[field_width] = 0x00;
 
-				string field_string_obj = field;
+                //string field_string_obj = field;
 
-				row->push_back(field_string_obj);
+                row->push_back(field);
 			}
 
 			/* Move to the next character in the current line */
@@ -358,7 +377,7 @@ void csv_parser::_get_fields_without_enclosure(csv_row_ptr row, const char * lin
 		}
 
 		/* Deallocate memory for field buffer */
-		CSV_PARSER_FREE_BUFFER_PTR(field);
+//		CSV_PARSER_FREE_BUFFER_PTR(field);
 	}
 }
 
@@ -410,15 +429,18 @@ bool csv_parser::check_current_char_in_delimiters(char* current_char)
 	return result;
 }
 
-void csv_parser::_get_fields_with_enclosure(csv_row_ptr row, const char * line, const unsigned int * line_length)
+void csv_parser::_get_fields_with_enclosure(csv_row_ptr row,
+                                            const char * line,
+                                            const unsigned int * line_length)
 {
-	char * field = NULL;
+    //char * field = NULL;
+    std::string field = "";
 
 	if (*line_length > 0)
 	{
-		field = (char *) malloc(*line_length);
+//		field = (char *) malloc(*line_length);
 
-		memset(field, 0, *line_length);
+//		memset(field, 0, *line_length);
 
 		register unsigned int current_state = 0U;
 		register unsigned int field_start   = 0U;
@@ -467,14 +489,15 @@ void csv_parser::_get_fields_with_enclosure(csv_row_ptr row, const char * line, 
 					const unsigned int field_width = field_end - field_start - 1U;
 
 					/* Copy exactly field_width bytes from field_starts_at to field */
-					memcpy(field, field_starts_at, field_width);
+                    //memcpy(field, field_starts_at, field_width);
+                    field = std::string(field_starts_at, field_width);
 
 					/* This must be a null-terminated character array */
-					field[field_width] = 0x00;
+                    //field[field_width] = 0x00;
 
-					string field_string_obj = field;
+                    //string field_string_obj = field;
 
-					row->push_back(field_string_obj);
+                    row->push_back(field);
 
 					/* Reset the state to zero value for the next field */
 					current_state = 0U;
@@ -506,24 +529,26 @@ void csv_parser::_get_fields_with_enclosure(csv_row_ptr row, const char * line, 
 			const unsigned int field_width = *line_length - field_start - 1U;
 
 			/* Copy exactly field_width bytes from field_starts_at to field */
-			memcpy(field, field_starts_at, field_width);
+            //memcpy(field, field_starts_at, field_width);
+            field = std::string(field_starts_at, field_width);
 
 			/* This must be a null-terminated character array */
-			field[field_width] = 0x00;
+            //field[field_width] = 0x00;
 
-			string field_string_obj = field;
+            //string field_string_obj = field;
 
-			row->push_back(field_string_obj);
+            row->push_back(field);
 		}
 
 		/* Release the buffer for the field */
-		CSV_PARSER_FREE_BUFFER_PTR(field);
+        //CSV_PARSER_FREE_BUFFER_PTR(field);
 	}
 }
 
 void csv_parser::_get_fields_with_optional_enclosure(csv_row_ptr row, const char * line, const unsigned int * line_length)
 {
-	char * field = NULL;
+    //char * field = NULL;
+    std::string field = "";
 
 	/*
 	 * How to extract the fields, when the enclosure char is optional.
@@ -535,9 +560,9 @@ void csv_parser::_get_fields_with_optional_enclosure(csv_row_ptr row, const char
 	 */
 	if (*line_length > 0)
 	{
-		field = (char *) malloc(*line_length);
+//		field = (char *) malloc(*line_length);
 
-		memset(field, 0, *line_length);
+//		memset(field, 0, *line_length);
 
 		register unsigned int field_start   = 0U;
 		register unsigned int field_end     = 0U;
@@ -571,14 +596,15 @@ void csv_parser::_get_fields_with_optional_enclosure(csv_row_ptr row, const char
 				field_width = (field_width > 2U) ? (field_width - final_adjustment) : field_width;
 
 				/* Copy exactly field_width bytes from field_starts_at to field */
-				memcpy(field, field_starts_at + first_adjustment, field_width);
+                //memcpy(field, field_starts_at + first_adjustment, field_width);
+                field = std::string(field_starts_at + first_adjustment, field_end);
 
 				/* This must be a null-terminated character array */
-				field[field_width] = 0x00;
+//				field[field_width] = 0x00;
 
-				string field_string_obj = field;
+                //string field_string_obj = field;
 
-				row->push_back(field_string_obj);
+                row->push_back(field);
 
 				/* This is the starting point of the next field */
 				field_start = char_pos + 1;
@@ -606,17 +632,18 @@ void csv_parser::_get_fields_with_optional_enclosure(csv_row_ptr row, const char
 				field_width = (field_width > 2U) ? (field_width - final_adjustment) : field_width;
 
 				/* Copy exactly field_width bytes from field_starts_at to field */
-				memcpy(field, field_starts_at + first_adjustment, field_width);
+//				memcpy(field, field_starts_at + first_adjustment, field_width);
+                field = std::string(field_starts_at + first_adjustment, field_width);
 
 				/* This must be a null-terminated character array */
-				field[field_width] = 0x00;
+//				field[field_width] = 0x00;
 
 				if (field_width > 0
-					&& *field != '\n')
+                    && field[0] != '\n')
 				{
-					string field_string_obj = field;
+                    //string field_string_obj = field;
 
-					row->push_back(field_string_obj);
+                    row->push_back(field);
 					char_pos++;
 				}
 			}
@@ -642,11 +669,12 @@ void csv_parser::_get_fields_with_optional_enclosure(csv_row_ptr row, const char
 				field_width = (field_width > 2U) ? (field_width - final_adjustment) : field_width;
 
 				/* Copy exactly field_width bytes from field_starts_at to field */
-				memcpy(field, field_starts_at + first_adjustment, field_width);
+                //memcpy(field, field_starts_at + first_adjustment, field_width);
+                field = std::string(field_starts_at + first_adjustment, field_width);
 
 				/* This must be a null-terminated character array */
 				if (field_width > 0 
-					&& *field != '\n')
+                    && field[0] != '\n')
 				{
 					string field_string_obj = field;
 					row->push_back(field_string_obj);
@@ -666,38 +694,35 @@ void csv_parser::_get_fields_with_optional_enclosure(csv_row_ptr row, const char
 		}
 
 		/* Deallocate memory for field buffer */
-		CSV_PARSER_FREE_BUFFER_PTR(field);
+//        CSV_PARSER_FREE_BUFFER_PTR(field);
 	}
 }
 
-void csv_parser::_read_single_line(char ** buffer, unsigned int * buffer_len)
+void csv_parser::_read_single_line(string &buffer)
 {
     long int original_pos = ftell(input_fp);
     long int current_pos  = original_pos;
-
+    char *cbuffer = NULL;
+    long int buffer_len = 0;
     register int current_char = 0;
 
     /* Checking one character at a time until the end of a line is found */
     while(true)
     {
         current_char = fgetc(input_fp);
-
         if (current_char == EOF)
         {
             /* We have reached the end of the file */
             more_rows = false;
-
             break;
-
-        } else if (current_char =='\n')
+        } else if (current_char == '\n')
         {
             /* We have reached the end of the row */
             current_pos++;
-
+            current_char = fgetc(input_fp);
+            more_rows = feof(input_fp) ? false : true;
             break;
-
         } else {
-
             current_pos++;
         }
     }
@@ -709,20 +734,18 @@ void csv_parser::_read_single_line(char ** buffer, unsigned int * buffer_len)
     }
     /* Find out how long this row is */
     const size_t length_of_row = current_pos - original_pos;
-
     if (length_of_row > 0)
     {
-        *buffer_len = length_of_row * sizeof(char) + 1;
-
-        *buffer = (char *) realloc(*buffer, *buffer_len);
-
-        memset(*buffer, 0, *buffer_len);
-
+        buffer_len = length_of_row * sizeof(char) + 1;
+        cbuffer = (char *) realloc(cbuffer, buffer_len);
+        memset(cbuffer, 0, buffer_len);
         /* Reset the internal pointer to the original position */
         fseek(input_fp, original_pos, SEEK_SET);
         /* Copy the contents of the line into the buffer */
-        fread(*buffer, 1, length_of_row, input_fp);
+        fread(cbuffer, 1, length_of_row, input_fp);
+        buffer = std::string(cbuffer);
 		fseek(input_fp, original_pos + length_of_row + 1, SEEK_SET);
+        free(cbuffer);
     }
     //return current_pos;
 }

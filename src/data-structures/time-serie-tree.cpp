@@ -44,7 +44,6 @@ TimeSerieTree::TimeSerieTree(int a_year,
 
 TimeSerieTree::~TimeSerieTree()
 {
-	destroyValues();
 }
 
 void TimeSerieTree::createTreeNodes(int year,
@@ -270,17 +269,6 @@ void TimeSerieTree::appendHours(TreeNodeIterator& a_dayIt)
 	for (int hourInt = 0; hourInt < 24; ++hourInt)
 	{
 		m_tree.append_child(a_dayIt, TreeNode(hourInt));
-	}
-}
-
-void TimeSerieTree::destroyValues()
-{
-	for (tree<TreeNode>::pre_order_iterator it = m_tree.begin();
-		 it != m_tree.end();
-		 ++it)
-	{			
-		TreeNode& node = *it;
-        node.destroyValues();
 	}
 }
 
