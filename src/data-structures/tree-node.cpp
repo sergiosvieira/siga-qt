@@ -22,8 +22,7 @@ void TreeNode::setValue(long row,
 float TreeNode::value(long row,
                       long col)
 {
-    shared_ptr<float> sp(m_matrix[row][col]);
-    float *value = sp.get();
+    float *value = m_matrix[row][col].get();
     return value == nullptr ? -999 : *value;
 }
 

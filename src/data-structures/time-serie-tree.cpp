@@ -157,19 +157,23 @@ std::tuple<float, float, float> TimeSerieTree::valueOnStation(const CDate& date,
 	float monthValue = -999.f;
 	float yearValue = -999.f;
 	TreeNode* dayNode = std::get<0>(dateTuple);
-	TreeNode* monthNode = std::get<0>(dateTuple);
-	TreeNode* yearNode = std::get<0>(dateTuple);
+    TreeNode* monthNode = std::get<1>(dateTuple);
+    TreeNode* yearNode = std::get<2>(dateTuple);
+    std::vector<int>::iterator stationIt = std::find(m_stations.begin(),
+                                                     m_stations.end(),
+                                                     stationID);
+    int stationIndex = stationIt - m_stations.begin();
 	if (dayNode != nullptr)
 	{
-        dayValue = dayNode->value(0, stationID);
+        dayValue = dayNode->value(0, stationIndex);
 	}
 	if (monthNode != nullptr)
 	{
-        monthValue = monthNode->value(0, stationID);
+        monthValue = monthNode->value(0, stationIndex);
 	}
 	if (yearNode != nullptr)
 	{
-        yearValue = yearNode->value(0, stationID);
+        yearValue = yearNode->value(0, stationIndex);
 	}
 	result = std::make_tuple(dayValue, monthValue, yearValue);
 	return result;
