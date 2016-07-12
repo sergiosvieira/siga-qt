@@ -13,14 +13,14 @@ Describe (TreeNodeTest)
     {
       TreeNode node(1);
       Assert::That(node.value(0, 0), Equals(-999.f));// No value defined
-      node.setValue(0, 0, make_shared<float>(100.f));
+      node.setValue(0, 0, 100.f);
       Assert::That(node.label(), Equals(1));
       Assert::That(node.value(0, 0), Equals(100.f));
     }
     It(TestArithmeticOperation)
     {
       TreeNode node(1);
-      node.setValue(0, 0, make_shared<float>(1.f));
+      node.setValue(0, 0, 1.f);
       node.sum(0, 0, 1.f);
       Assert::That(node.value(0, 0), Equals(2.f));
     }
@@ -28,15 +28,15 @@ Describe (TreeNodeTest)
     {
       TreeNode node(1);
       Assert::That(node.isEmpty(0, 0), Equals(true));
-      node.setValue(0, 0, make_shared<float>(1.f));
+      node.setValue(0, 0, 1.f);
       Assert::That(node.isEmpty(0, 0), Equals(false));
     }
     It(TestNodeValuesSize)
     {
       TreeNode node(1);
       Assert::That(node.size(), Equals(0));
-      node.setValue(0, 0, make_shared<float>(1.f));
-      node.setValue(1, 2, make_shared<float>(2.f));
+      node.setValue(0, 0, 1.f);
+      node.setValue(1, 2, 2.f);
       Assert::That(node.size(), Equals(6));
     }
     It(TestOperatorOverloading)
