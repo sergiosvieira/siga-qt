@@ -33,13 +33,14 @@
 
 using namespace std;
 using namespace SIGA::DS;
-using TreeNodeIterator = tree<TreeNode>::iterator;
+using TreeNodeType = tree<TreeNode>;
+using TreeNodeIterator = TreeNodeType::iterator;
 
 namespace SIGA
 {
     namespace DS
     {
-        /** Predefined value **/
+        /** Predefined values **/
         enum class PeriodType
         {
             NONE = 0x0000,
@@ -48,12 +49,17 @@ namespace SIGA
             MONTHLY_TYPE  = 0x0011,
             YEARLY_TYPE  = 0x0001
         }; // NONE = 0x0000, HOURLY_TYPE  = 0x1111, DAILY_TYPE  = 0x0111, MONTHLY_TYPE  = 0x0011, YEARLY_TYPE  = 0x0001
+        using DayMonthYearNodes = std::tuple<TreeNode*, TreeNode*, TreeNode*>;
+        using DateIDValueParameters = std::tuple<CDate, int, float>;
+        using DayMonthYearValue = std::tuple<float, float, float>;
         /*!
          * \brief The TimeSerieTree class
          * Used to store a time serie in a Tree Data Structure
          */
         class TimeSerieTree
         {
+        private:
+            using VectorOfInt = vector<int>;
         public:
             /*!
              * \brief Default Constructor
@@ -80,16 +86,39 @@ namespace SIGA
             /**
                 @return value inserted with success - true or false
             **/
-            bool insertValueOnStation(const CDate& a_date,
-                                      const int& a_stationID,
-                                      const float& a_value);
-            void insertStationID(const int& a_stationID);
+            bool setDateValue(const CDate& a_date,
+                              const int& id,
+                              const float& a_value);
             void clearStations();
             /**
                 @return day value, month (sum of days), year (sum of months)
             **/
-            std::tuple<float, float, float> valueOnStation(const CDate& date,
-                                                           const int& stationID);
+            DayMonthYearValue dateValues(const CDate& date,
+                                         const int& id);
+            /*!
+             * \brief get daily value in date from id
+             * \param date
+             * \param id
+             * \return
+             */
+            float dayValue(const CDate& date,
+                           const int& id);
+            /*!
+             * \brief get monthly value in date from id
+             * \param date
+             * \param id
+             * \return
+             */
+            float monthValue(const CDate& date,
+                             const int& id);
+            /*!
+             * \brief get yearly value in date from id
+             * \param date
+             * \param id
+             * \return
+             */
+            float yearValue(const CDate& date,
+                            const int& id);
             void sortValues();
             int depth(TreeNodeIterator& a_nodeIterator) const;
             int stationsLength() const;
@@ -108,29 +137,69 @@ namespace SIGA
             PeriodType periodType() const;
             int size() const;
         protected:
-            std::vector<int> m_stations;
+            VectorOfInt m_stations;
             tree<TreeNode> m_tree;
             int m_rows = 0;
             int m_yearsCounter = 0;
             PeriodType m_type;
         private:
-            typedef std::function<void(TreeNodeIterator&)> HourFunction;
-            typedef std::function<void(TreeNodeIterator&, int, HourFunction)> DayFunction;
-            void appendMonths(int a_year,
-                              TreeNodeIterator& a_yearIt,
-                              DayFunction a_dayFunction = nullptr,
-                              HourFunction a_hourFunction = nullptr);
-            void appendDays(TreeNodeIterator& a_monthIt,
-                            int a_daysInMonth,
-                            HourFunction a_hourFunction = nullptr);
-            void appendHours(TreeNodeIterator& a_dayIt);
             void updateNodeValue(TreeNode* node,
                                  const float& value,
                                  const int& stationIndex);
-            /**
-                @return day, month, year
-            **/
-            std::tuple<TreeNode*, TreeNode*, TreeNode*> nodesFromDate(const CDate& a_date);
+            /*!
+             * \brief get pointers to day, month and year TreeNode
+             * \param a_date
+             * \return
+             */
+            DayMonthYearNodes nodesFromDate(const CDate& a_date);
+            /*!
+             * \brief insert value on year node, all month nodes and all day nodes
+             *   Year - insert value
+             *   For each month
+             *     insert value / 12
+             *   For each day
+             *     insert value / 365 or value / 366
+             * \param nodes
+             * \param parameters
+             * \return
+             */
+            bool insertYearlyValue(DayMonthYearNodes& nodes,
+                                   DateIDValueParameters& parameters);
+            /*!
+             * \brief insert value on year node, month node and all day nodes
+             *   Year - sum value to current year node value
+             *   Month - insert value
+             *   For each day
+             *     insert value / 31 or value / 30 or value / 29 or value / 28
+             * \param nodes
+             * \param parameters
+             * \return
+             */
+            bool insertMonthlyValue(DayMonthYearNodes& nodes,
+                                    DateIDValueParameters& parameters);
+            /*!
+             * \brief insert value on year node, month node and day node
+             *   Year - sum value to current yearly node value
+             *   Month - sum value to current monthly node value
+             *   Day - insert value
+             * \param nodes
+             * \param parameters
+             * \return
+             */
+            bool insertDailyValue(DayMonthYearNodes& nodes,
+                                  DateIDValueParameters& parameters);
+            /*!
+             * \brief get station index from station id
+             * \param id
+             * \return
+             */
+            int stationIndex(int id);
+            /*!
+             * \brief fill all node's children values
+             * \param base
+             * \param value
+             */
+            void insertID(const int& id);
         };
 
     }
