@@ -13,8 +13,8 @@ TreeNode::TreeNode(int label): m_label(label)
 }
 
 void TreeNode::setValue(long row,
-                     long col,
-                     shared_ptr<float> value)
+                        long col,
+                        float value)
 {
     m_matrix[row][col] = value;
 }
@@ -22,8 +22,7 @@ void TreeNode::setValue(long row,
 float TreeNode::value(long row,
                       long col)
 {
-    float *value = m_matrix[row][col].get();
-    return value == nullptr ? -999 : *value;
+    return isEmpty(row, col) ? -999.f : m_matrix[row][col];
 }
 
 void TreeNode::sum(long row,
@@ -32,20 +31,23 @@ void TreeNode::sum(long row,
 {
     if (!isEmpty(row, col))
     {
-        *m_matrix[row][col] += value;
+        m_matrix[row][col] += value;
     }
     else
     {
-        m_matrix[row][col] = make_shared<float>(value);
+        m_matrix[row][col] = value;
     }
 }
 
 bool TreeNode::isEmpty(long row,
                        long col)
 {
-    shared_ptr<float> sp(m_matrix[row][col]);
-    float *value = sp.get();
-    return value == nullptr;
+    if (m_matrix.find(row) != m_matrix.end()
+        && m_matrix[row].find(col) != m_matrix[row].end())
+    {
+        return false;
+    }
+    return true;
 }
 
 int TreeNode::size()

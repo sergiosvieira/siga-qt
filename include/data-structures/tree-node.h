@@ -4,8 +4,6 @@
 /** STL **/
 #include <vector>
 
-#include <memory> // smart pointer
-
 #include "sparse-matrix.h"
 
 using namespace std;
@@ -15,7 +13,6 @@ namespace SIGA
 {
     namespace DS
     {
-        using SPVectorOfInt = shared_ptr<vector<int>>;
         /*!
          * \brief The TreeNode class
          */
@@ -36,7 +33,7 @@ namespace SIGA
              */
             void setValue(long row,
                           long col,
-                          shared_ptr<float> value);
+                          float value);
             /*!
              * \brief Returns current value of specified row, col
              * \param row
@@ -83,8 +80,7 @@ namespace SIGA
             }
         protected:
             int m_label = 0;
-            SPVectorOfInt m_stations;
-            SparseMatrix<shared_ptr<float>> m_matrix;
+            SparseMatrix<float> m_matrix;
         };
         /** find label **/
         struct find_label : std::unary_function<TreeNode, bool>
