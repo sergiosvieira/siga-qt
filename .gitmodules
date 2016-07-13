@@ -1,3 +1,6 @@
 [submodule "lib/igloo"]
 	path = lib/igloo
 	url = git@git.funceme.br:siga/igloo.git
+[submodule "lib/json"]
+	path = lib/json
+	url = git@git.funceme.br:siga/json.git
