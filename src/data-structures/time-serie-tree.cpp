@@ -173,7 +173,7 @@ int TimeSerieTree::rowsLength() const
 	return m_rows;
 }
 
-std::vector<std::string> TimeSerieTree::stationLabels() const
+TimeSerieTree::VectorOfString TimeSerieTree::stationLabels() const
 {
 	std::vector<std::string> result;
 	for (const int& stationID: m_stations)
@@ -189,7 +189,7 @@ int TimeSerieTree::stationID(int a_index) const
 	return m_stations.at(a_index);
 }
 
-int TimeSerieTree::yearsLenght() const 
+int TimeSerieTree::numberOfYears() const
 {
 	return m_yearsCounter;
 }
@@ -205,17 +205,6 @@ int TimeSerieTree::size() const
 }
 
 /** Private Methods **/
-
-void TimeSerieTree::updateNodeValue(TreeNode* node,
-                                    const float& value,
-                                    const int& stationIndex)
-{
-    if (node != nullptr)
-	{
-        node->setValue(0, stationIndex, value);
-	}
-}
-
 DayMonthYearNodes TimeSerieTree::nodesFromDate(const CDate& a_date)
 {
     DayMonthYearNodes result;
@@ -239,7 +228,11 @@ DayMonthYearNodes TimeSerieTree::nodesFromDate(const CDate& a_date)
 				dayNode = &(*dayIt);
 			}
 		}
-	}
+    }
+    if (!dayNode || !monthNode || !yearNode)
+    {
+        throw std::invalid_argument("Invalid date!!");
+    }
 	result = std::make_tuple(dayNode, monthNode, yearNode);
     return result;
 }
@@ -284,6 +277,7 @@ bool TimeSerieTree::insertMonthlyValue(DayMonthYearNodes &nodes,
                                        DateIDValueParameters &parameters)
 {
     TreeNode* yearNode = get<2>(nodes);
+    TreeNode* monthNode = get<1>(nodes);
     CDate date = get<0>(parameters);
     bool isLeapYear = CDateCalc::IsLeapYear(date.GetYear());
     int id = get<1>(parameters);
@@ -292,27 +286,22 @@ bool TimeSerieTree::insertMonthlyValue(DayMonthYearNodes &nodes,
     yearNode->sum(0, index, value);
     TreeNodeIterator yearIt = find_if(m_tree.begin(), m_tree.end(), find_label(date.GetYear()));
     if (yearIt == m_tree.end()) return false;
-    TreeNodeType::sibling_iterator monthIt = yearIt.begin();
-    while (monthIt != yearIt.end())
+    TreeNodeType::sibling_iterator monthIt = find_if(yearIt.begin(), yearIt.end(), find_label(date.GetMonth()));
+    float daysInMonth = CDateCalc::DaysInMonth(monthNode->label(), isLeapYear);
+    if (monthNode)
     {
-        TreeNode* monthNode = &(*monthIt);
-        float daysInMonth = CDateCalc::DaysInMonth(monthNode->label(), isLeapYear);
-        if (monthNode)
+        monthNode->setValue(0, index, value);
+    }
+    TreeNodeIterator dayIt = monthIt.begin();
+    float finalValue = value / daysInMonth;
+    while (dayIt != monthIt.end())
+    {
+        TreeNode* dayNode = &(*dayIt);
+        if (dayNode)
         {
-            monthNode->setValue(0, index, value);
+            dayNode->setValue(0, index, finalValue);
         }
-        TreeNodeIterator dayIt = monthIt.begin();
-        float finalValue = value / daysInMonth;
-        while (dayIt != monthIt.end())
-        {
-            TreeNode* dayNode = &(*dayIt);
-            if (dayNode)
-            {
-                dayNode->setValue(0, index, finalValue);
-            }
-            dayIt++;
-        }
-        monthIt++;
+        dayIt++;
     }
     return true;
 }
@@ -321,35 +310,14 @@ bool TimeSerieTree::insertDailyValue(DayMonthYearNodes &nodes,
                                      DateIDValueParameters &parameters)
 {
     TreeNode* yearNode = get<2>(nodes);
-    CDate date = get<0>(parameters);
-    bool isLeapYear = CDateCalc::IsLeapYear(date.GetYear());
+    TreeNode* monthNode = get<1>(nodes);
+    TreeNode* dayNode = get<0>(nodes);
     int id = get<1>(parameters);
     float value = get<2>(parameters);
     int index = stationIndex(id);
     yearNode->sum(0, index, value);
-    TreeNodeIterator yearIt = find_if(m_tree.begin(), m_tree.end(), find_label(date.GetYear()));
-    if (yearIt == m_tree.end()) return false;
-    TreeNodeType::sibling_iterator monthIt = yearIt.begin();
-    while (monthIt != yearIt.end())
-    {
-        TreeNode* monthNode = &(*monthIt);
-        float daysInMonth = CDateCalc::DaysInMonth(monthNode->label(), isLeapYear);
-        if (monthNode)
-        {
-            monthNode->sum(0, index, value);
-        }
-        TreeNodeIterator dayIt = monthIt.begin();
-        while (dayIt != monthIt.end())
-        {
-            TreeNode* dayNode = &(*dayIt);
-            if (dayNode)
-            {
-                dayNode->setValue(0, index, value);
-            }
-            dayIt++;
-        }
-        monthIt++;
-    }
+    monthNode->sum(0, index, value);
+    dayNode->setValue(0, index, value);
     return true;
 }
 

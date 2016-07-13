@@ -60,6 +60,7 @@ namespace SIGA
         {
         private:
             using VectorOfInt = vector<int>;
+            using VectorOfString = vector<string>;
         public:
             /*!
              * \brief Default Constructor
@@ -83,16 +84,24 @@ namespace SIGA
              */
             void createTreeNodes(int year,
                                  PeriodType type);
-            /**
-                @return value inserted with success - true or false
-            **/
+            /*!
+             * \brief set station date value
+             * \param a_date
+             * \param id
+             * \param a_value
+             * \return Success(true) - Fail(false)
+             */
             bool setDateValue(const CDate& a_date,
                               const int& id,
                               const float& a_value);
+            /*! To do: is it really needed? */
             void clearStations();
-            /**
-                @return day value, month (sum of days), year (sum of months)
-            **/
+            /*!
+             * \brief returns each date (day, month and year) value from station
+             * \param date
+             * \param id
+             * \return
+             */
             DayMonthYearValue dateValues(const CDate& date,
                                          const int& id);
             /*!
@@ -119,22 +128,67 @@ namespace SIGA
              */
             float yearValue(const CDate& date,
                             const int& id);
+            /*!
+             * \brief sort values
+             */
             void sortValues();
+            /*!
+             * \brief depth of tree
+             * \param a_nodeIterator
+             * \return
+             */
             int depth(TreeNodeIterator& a_nodeIterator) const;
+            /*!
+             * \brief stations Length
+             * \return
+             */
             int stationsLength() const;
+            /*!
+             * \brief rows Length
+             * \return
+             */
             int rowsLength() const;
-            std::vector<std::string> stationLabels() const;
+            /*!
+             * \brief id's labels
+             * \return
+             */
+            VectorOfString stationLabels() const;
+            /*!
+             * \brief station ID from its index
+             * \param a_index
+             * \return
+             */
             int stationID(int a_index) const;
+            /*!
+             * \brief begin tree iterator
+             * \return
+             */
             inline TreeNodeIterator begin() const
             {
                 return m_tree.begin();
             }
+            /*!
+             * \brief end tree iterator
+             * \return
+             */
             inline TreeNodeIterator end() const
             {
                 return m_tree.end();
             }
-            int yearsLenght() const;
+            /*!
+             * \brief years
+             * \return
+             */
+            int numberOfYears() const;
+            /*!
+             * \brief tree period type
+             * \return
+             */
             PeriodType periodType() const;
+            /*!
+             * \brief tree size
+             * \return
+             */
             int size() const;
         protected:
             VectorOfInt m_stations;
@@ -143,9 +197,6 @@ namespace SIGA
             int m_yearsCounter = 0;
             PeriodType m_type;
         private:
-            void updateNodeValue(TreeNode* node,
-                                 const float& value,
-                                 const int& stationIndex);
             /*!
              * \brief get pointers to day, month and year TreeNode
              * \param a_date
