@@ -82,7 +82,18 @@ Describe (StringUtilsTest)
         Assert::That(result[0], Equals("first"));
         Assert::That(result[1], Equals("second"));
     }
+    It(Split_SingleElementsHifen)
+    {
+        std::string input("first-second-three-four");
+        std::vector<std::string> result;
+        StringUtils::split(result, input, "-");
 
+        Assert::That(result.size(), Equals(4));
+        Assert::That(result[0], Equals("first"));
+        Assert::That(result[1], Equals("second"));
+        Assert::That(result[2], Equals("three"));
+        Assert::That(result[3], Equals("four"));
+    }
 
 };
 
