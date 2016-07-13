@@ -129,6 +129,38 @@ Describe (StringUtilsTest)
         Assert::That(input, Equals("The lazy brown fox jumps over the lazy dog"));
     }
 
+    //Test CreateLayername
+    It(CreateLayername)
+    {
+        std::string input("shapefile.shp");
+        std::string result;
+
+        StringUtils::createsLayerName(result, input.c_str());
+
+        Assert::That(result, "shapefile_layer");
+    }
+
+    //Normalizer Text
+    It(NormalizeLowercase)
+    {
+        std::string input("âàáãäêèéëîìíïôòóõöûùúüç");
+        std::string result;
+
+        StringUtils::normalize(result, input);
+
+        Assert::That(result, "aaaaaeeeeiiiiooooouuuuc");
+    }
+    It(NormalizeUppercase)
+    {
+        std::string input("ÂÀÁÃÄÊÈÉËÎÌÍÏÔÒÒÔÖÛÙÚÜÇ");
+        std::string result;
+
+        StringUtils::normalize(result, input);
+
+        Assert::That(result, "AAAAAEEEEIIIIOOOOOUUUUC");
+
+    }
+
 };
 
 int main(int argc, char** argv)
