@@ -9,12 +9,41 @@ using namespace SIGA::DS;
 
 Describe (StringUtilsTest)
 {
-    It(RemoveSpaceUsingTrimX)
+    It(RemoveSpaceUsingTrimLeft)
     {
-        //Describle: Remove Space Blank Left or Right position
         string input(" left");
         StringUtils::trim(input);
         Assert::That(input, Equals("left"));
+    }
+    It(RemoveSpaceUsingTrimRight)
+    {
+        string input("right ");
+        StringUtils::trim(input);
+        Assert::That(input, Equals("right"));
+    }
+    It(RemoveSpaceUsingTrimBothLeftRight)
+    {
+        string input(" trim ");
+        StringUtils::trim(input);
+        Assert::That(input, Equals("trim"));
+    }
+    It(RemoveSpaceUsingTrimBothBetweenLeftRight)
+    {
+        string input(" trim trim ");
+        StringUtils::trim(input);
+        Assert::That(input, Equals("trim trim"));
+    }
+    It(RemoveSpaceUsingTrimBothBetweenLeft)
+    {
+        string input("trim trim ");
+        StringUtils::trim(input);
+        Assert::That(input, Equals("trim trim"));
+    }
+    It(RemoveSpaceUsingTrimBothBetweenRight)
+    {
+        string input(" trim trim");
+        StringUtils::trim(input);
+        Assert::That(input, Equals("trim trim"));
     }
 };
 
