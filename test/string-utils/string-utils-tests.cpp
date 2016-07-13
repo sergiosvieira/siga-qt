@@ -52,7 +52,38 @@ Describe (StringUtilsTest)
         StringUtils::trim(input);
         Assert::That(input, Equals("t h r e e"));
     }
-    //End TRIM
+
+    //Test SPLIT
+    It(Split_SimpleTest)
+    {
+        string input("first");
+        vector<std::string> result;
+        StringUtils::split(result, input, ";");
+
+        Assert::That(result.size(), Equals(1));
+        Assert::That(result[0], Equals("first"));
+    }
+    It(Split_SingleComma)
+    {
+        string input("first;");
+        vector<std::string> result;
+        StringUtils::split(result, input, ";");
+
+        Assert::That(result.size(), Equals(1));
+        Assert::That(result[0], Equals("first"));
+    }
+    It(Split_SingleElements)
+    {
+        std::string input("first,second,");
+        std::vector<std::string> result;
+        StringUtils::split(result, input, ",");
+
+        Assert::That(result.size(), Equals(2));
+        Assert::That(result[0], Equals("first"));
+        Assert::That(result[1], Equals("second"));
+    }
+
+
 };
 
 int main(int argc, char** argv)
