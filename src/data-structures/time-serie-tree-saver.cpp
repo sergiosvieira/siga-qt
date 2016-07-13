@@ -19,35 +19,40 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "SIGA/SigaConverter/TimeSerieTreeSaver.h"
+#include "../../include/data-structures/time-serie-tree-saver.h"
 
 #include <fstream>
-#include "SIGA/string-utils.h"
 
-void TimeSerieTreeSaver::savetoDirectory(std::vector<std::vector<std::string>>& a_rows,
-										 std::string a_fieldSeparator,
-										 std::string a_outputDirectory,
-										 std::string a_periodType)
+#include "../../include/utils/string-utils.h"
+
+
+using namespace SIGA::DS;
+
+void TimeSerieTreeSaver::savetoDirectory(TimeSerieTreeFormatter::MatrixOfString& rows,
+                                         SeparatorDirectoryTypeOutput &options)
 {
-	std::vector<std::vector<std::string>>::iterator it = a_rows.begin();
+    std::vector<std::vector<std::string>>::iterator it = rows.begin();
 	std::vector<std::string> current = *it;
 	int valueIndex = 1;
+    string outputDirectory = get<1>(options);
+    string periodType = get<2>(options);
+    string separator = get<0>(options);
 	for (const std::string& row : current)
 	{
-		std::string filename = a_outputDirectory + "\\" + row + a_periodType + ".srs";
+        std::string filename = outputDirectory + "\\" + row + periodType + ".srs";
 		std::ofstream outputFile;
 		bool skip = true;
 		outputFile.open(filename);
 		if (outputFile.is_open())
 		{
-			for (std::vector<std::string>& values: a_rows)
+            for (std::vector<std::string>& values: rows)
 			{
 				if (skip == true)
 				{
 					skip = false;
 					continue;
 				}
-				outputFile << values[0] << a_fieldSeparator;
+                outputFile << values[0] << separator;
 				outputFile << values[valueIndex] << "\n";
 			}
 		}
@@ -56,18 +61,18 @@ void TimeSerieTreeSaver::savetoDirectory(std::vector<std::vector<std::string>>& 
 	}
 }
 
-void save(std::vector<std::vector<std::string>>& a_rows,
-		  std::string a_fieldSeparator,
-		  std::string a_outputFile,
-		  bool a_addHeader,
-		  std::string a_periodType)
+void TimeSerieTreeSaver::save(TimeSerieTreeFormatter::MatrixOfString& rows,
+                              std::string fieldSeparator,
+                              std::string outputFile,
+                              bool addHeader,
+                              std::string periodType)
 {
-	bool skip = a_addHeader ? false : true;
-	std::ofstream outputFile;
-	outputFile.open(a_outputFile);
-	if (outputFile.is_open())
+    bool skip = addHeader ? false : true;
+    std::ofstream oFile;
+    oFile.open(outputFile);
+    if (oFile.is_open())
 	{
-		for (std::vector<std::string>& row: a_rows)
+        for (std::vector<std::string>& row: rows)
 		{
 			if (skip == true)
 			{
@@ -75,34 +80,36 @@ void save(std::vector<std::vector<std::string>>& a_rows,
 				continue;
 			}
 			std::string rowStr;
-			StringUtils::join(rowStr, row, a_fieldSeparator);
-			outputFile << rowStr << "\n";
+            StringUtils::join(rowStr, row, fieldSeparator);
+            oFile << rowStr << "\n";
 		}
 	}
-	outputFile.close();
+    oFile.close();
 }
 
-void TimeSerieTreeSaver::savetoFile(std::vector<std::vector<std::string>>& a_rows,
-									std::string a_fieldSeparator,
-									std::string a_outputFile,
-									std::string a_periodType)
+void TimeSerieTreeSaver::savetoFile(TimeSerieTreeFormatter::MatrixOfString& rows,
+                                    SeparatorDirectoryTypeOutput &options)
 {
-	if (a_outputFile.find("_diario") != std::string::npos
-		|| a_outputFile.find("_mensal") != std::string::npos
-		|| a_outputFile.find("_anual") != std::string::npos)
+    string separator = get<0>(options);
+    string outputFile = get<1>(options);
+    string periodType = get<2>(options);
+    if (outputFile.find("_diario") != std::string::npos
+        || outputFile.find("_mensal") != std::string::npos
+        || outputFile.find("_anual") != std::string::npos)
 	{
-		a_periodType = "";
+        periodType = "";
 	}
-	StringUtils::replace(a_outputFile, ".", a_periodType + ".");
-	save(a_rows,  a_fieldSeparator, a_outputFile, false, a_periodType);
+    StringUtils::replace(outputFile, ".", periodType + ".");
+    save(rows,  separator, outputFile, false, periodType);
 }
 
 
-void TimeSerieTreeSaver::savetoFileWithHeader(std::vector<std::vector<std::string>>& a_rows,
-											  std::string a_fieldSeparator,
-											  std::string a_outputFile,
-											  std::string a_periodType)
+void TimeSerieTreeSaver::savetoFileWithHeader(TimeSerieTreeFormatter::MatrixOfString &rows,
+                                              SeparatorDirectoryTypeOutput& options)
 {
-	StringUtils::replace(a_outputFile, ".", a_periodType + ".");
-	save(a_rows,  a_fieldSeparator, a_outputFile, true, a_periodType);
+    string separator = get<0>(options);
+    string outputFile = get<1>(options);
+    string periodType = get<2>(options);
+    StringUtils::replace(outputFile, ".", periodType + ".");
+    save(rows, separator, outputFile, true, periodType);
 }

@@ -22,23 +22,61 @@
 #ifndef __TIME_SERIE_TREE_SAVER__
 #define __TIME_SERIE_TREE_SAVER__
 
-#include "TimeSerieTree.h"
+#include "time-serie-tree-formatter.h"
 
-class TimeSerieTreeSaver
+#include <tuple>
+
+
+using namespace SIGA::DS;
+
+namespace SIGA
 {
-public:
-	static void savetoDirectory(std::vector<std::vector<std::string>>& a_rows,
-								std::string a_fieldSeparator,
-								std::string a_outputDirectory,
-								std::string a_periodType);
-	static void savetoFile(std::vector<std::vector<std::string>>& a_rows,
-						   std::string a_fieldSeparator,
-						   std::string a_outpputFile,
-						   std::string a_periodType);
-	static void savetoFileWithHeader(std::vector<std::vector<std::string>>& a_rows,
-									 std::string a_fieldSeparator,
-									 std::string a_outputFile,
-									 std::string a_periodType);
-};
+    namespace DS
+    {
+        class TimeSerieTreeSaver
+        {
+        public:
+            /*!
+             * Predefined types
+             */
+            using SeparatorDirectoryTypeOutput = tuple<string, string, string>;
+            /*!
+             * \brief save matrix of string to directory
+             * \param rows
+             * \param options
+             */
+            static void savetoDirectory(TimeSerieTreeFormatter::MatrixOfString& rows,
+                                        SeparatorDirectoryTypeOutput& options);
+            /*!
+             * \brief save matrix of string to file
+             * \param rows
+             * \param options
+             */
+            static void savetoFile(TimeSerieTreeFormatter::MatrixOfString& rows,
+                                   SeparatorDirectoryTypeOutput& options);
+            /*!
+             * \brief save matrix of string to file with header
+             * \param rows
+             * \param options
+             */
+            static void savetoFileWithHeader(TimeSerieTreeFormatter::MatrixOfString& rows,
+                                             SeparatorDirectoryTypeOutput& options);
+        private:
+            /*!
+             * \brief internal save method
+             * \param rows
+             * \param fieldSeparator
+             * \param outputFile
+             * \param addHeader
+             * \param periodType
+             */
+            static void save(TimeSerieTreeFormatter::MatrixOfString& rows,
+                             std::string fieldSeparator,
+                             std::string outputFile,
+                             bool addHeader,
+                             std::string periodType);
+        };
+    }
+}
 
 #endif /** __TIME_SERIE_TREE_SAVER__ **/

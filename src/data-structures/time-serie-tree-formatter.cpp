@@ -18,59 +18,58 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
-#include "SIGA/SigaConverter/TimeSerieTreeFormatter.h"
+#include "../../include/data-structures/time-serie-tree-formatter.h"
 
 /** SIGA **/
-#include "SIGA/string-utils.h"
+#include "../../include/utils/string-utils.h"
+#include "../../include/data-structures/tree-node.h"
+
+using namespace SIGA::DS;
 
 
 /** Public Methods **/
-std::vector<std::vector<std::string>> TimeSerieTreeFormatter::matrix(TimeSerieTree& a_tree,
-																	 const InputStructure& a_inputOptions)
-{
-	std::vector<std::vector<std::string>> result;
-	a_tree.sortValues();
-	for (tree<TreeNode>::pre_order_iterator it = a_tree.begin();
-		 it != a_tree.end();
-		 ++it)
-	{
-		TreeNode& node = *it;
-	}
-	return result;
-}
+//TimeSerieTreeFormatter::MatrixOfString TimeSerieTreeFormatter::matrix(TimeSerieTree& tree,
+//                                              const Input& options)
+//{
+//    MatrixOfString result;
+//    tree.sortValues();
+//    for (tree<TreeNode>::pre_order_iterator it = tree.begin();
+//		 it != a_tree.end();
+//		 ++it)
+//	{
+//		TreeNode& node = *it;
+//	}
+//	return result;
+//}
 
-std::vector<std::vector<std::string>> TimeSerieTreeFormatter::serie(TimeSerieTree& a_tree,
-																	const InputStructure& a_inputOptions,
-																	std::function<bool(long, long)> a_progress)
+TimeSerieTreeFormatter::MatrixOfString TimeSerieTreeFormatter::serie(TimeSerieTree& tsTree,
+                                                                     const TypeFormatSeparatorInput &options,
+                                                                     std::function<bool(long, long)> a_progress)
 {	
-	std::vector<std::vector<std::string>> result;
-	result.push_back(a_tree.stationLabels());
-	a_tree.sortValues();
-	int stopTreeDepth = treeDepthFromPeriodType(a_inputOptions.periodType);
-	DateStructure dateStructure = {};
-	long total = a_tree.size() * a_tree.stationsLength();
-	long currentProgress = 0;
-	for (tree<TreeNode>::pre_order_iterator it = a_tree.begin();
-		 it != a_tree.end();
+    MatrixOfString result;
+    PeriodType type = get<0>(options);
+    string dateFormat = get<1>(options);
+    string separator = get<2>(options);
+    result.push_back(tsTree.stationLabels());
+    tsTree.sortValues();
+    int stopTreeDepth = treeDepthFromPeriodType(type);
+    long total = tsTree.size() * tsTree.stationsLength();
+    long currentProgress = 0;
+    for (tree<TreeNode>::pre_order_iterator it = tsTree.begin();
+         it != tsTree.end();
 		 ++it)
 	{
 		TreeNode& node = *it;
-		int currentDepth = a_tree.depth(it);
-		dateFromTreeDepth(dateStructure, node, currentDepth);
+        int currentDepth = tsTree.depth(it);
 		if (currentDepth == stopTreeDepth)
 		{						
-			CDate date(dateStructure.year, dateStructure.month, dateStructure.day);
+            CDate date = dateFromTreeDepth(node, currentDepth);
 			std::vector<std::string> rowVector;
-			rowVector.push_back(date.ToStringWithFormat(a_inputOptions.dateFormat));
-			for (int index = 0; index < a_tree.stationsLength(); ++index)
-			{
-				std::string valueString = "-999";
-				float* value = node.m_matrix[0][index] != nullptr ? node.m_matrix[0][index] : nullptr;
-				if (value != nullptr)
-				{
-					valueString = std::to_string(*value);
-				}
+            rowVector.push_back(date.ToStringWithFormat(dateFormat));
+            for (int index = 0; index < tsTree.stationsLength(); ++index)
+			{               
+                float value = node.value(0, index);
+                string valueString = std::to_string(value);
 				rowVector.push_back(valueString);
 				++currentProgress;
 				if (a_progress != nullptr)
@@ -89,31 +88,27 @@ std::vector<std::vector<std::string>> TimeSerieTreeFormatter::serie(TimeSerieTre
 }
 
 /** Private Methods **/
-void TimeSerieTreeFormatter::dateFromTreeDepth(DateStructure& a_date, 
-											   const TreeNode& a_node, 
-											   const int& a_depth)
+CDate TimeSerieTreeFormatter::dateFromTreeDepth(const TreeNode& node,
+                                                const int& depth)
 {
-	switch(a_depth)
+    CDate result;
+    switch(depth)
 	{
 		case 0:
 		{
-			a_date.year = a_node.label;
-			a_date.month = 1;
-			a_date.day = 1;
+            result = CDate(node.label(), 1, 1);
 		} break;
 		case 1:
 		{
-			a_date.month = a_node.label;
-			a_date.day = 1;
+            result = CDate(0, node.label(), 1);
 		} break;
 		case 2:
 		{
-			a_date.day = a_node.label;
-			a_date.hour = 0;
+            result = CDate(0, 0, node.label());
 		} break;
 		case 3:
 		{
-			a_date.hour = a_node.label;
+            result = CDate(0, 0, 0);
 		} break;
 	}	
 }
@@ -123,15 +118,15 @@ int TimeSerieTreeFormatter::treeDepthFromPeriodType(const PeriodType& a_periodTy
 	int result = 0;
 	switch (a_periodType)
 	{
-		case MONTHLY_TYPE:
+        case PeriodType::MONTHLY_TYPE:
 		{
 			result = 1;
 		} break;
-		case DAILY_TYPE:
+        case PeriodType::DAILY_TYPE:
 		{
 			result = 2;
 		} break;
-		case HOURLY_TYPE:
+        case PeriodType::HOURLY_TYPE:
 		{
 			result = 3;
 		} break;

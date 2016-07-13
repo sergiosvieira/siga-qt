@@ -23,56 +23,58 @@
 #define __TIME_SERIE_TREE_FORMATTER__
 
 /** SIGA **/
-#include "SIGA/SigaConverter/TimeSerieTree.h"
-#include "SIGA/import-types.h"
+#include "time-serie-tree.h"
 
 /** STL **/
 #include <vector>
+#include <tuple>
 #include <string>
 #include <functional>
 
-class TimeSerieTreeFormatter
+using namespace SIGA::DS;
+
+namespace SIGA
 {
-public:
-	/*! InputStructure
-	 *  \param PeriodType (NONE = 0x0000, HOURLY_TYPE  = 0x1111, DAILY_TYPE  = 0x0111, MONTHLY_TYPE  = 0x0011, YEARLY_TYPE  = 0x0001)
-	 *  \param DateFormat - std::string (Examples: dd/mm/yyyy, mm/yyyy, yyyy)
-	 *  \param Field Separator - std::string (Examples: "," "\t")
-	 */
-	typedef struct InputStructure
-	{
-		// PeriodType (NONE = 0x0000, HOURLY_TYPE  = 0x1111, DAILY_TYPE  = 0x0111, MONTHLY_TYPE  = 0x0011, YEARLY_TYPE  = 0x0001)
-		PeriodType periodType;
-		std::string dateFormat;
-		std::string fieldSeparator;
-		InputStructure():periodType(DAILY_TYPE),
-						 dateFormat("yyy-mm-dd"),
-						 fieldSeparator("\t"){};					
-		InputStructure(PeriodType a_periodType,
-					   std::string a_dateFormat,
-					   std::string a_fieldSeparator):
-					   periodType(a_periodType),
-					   dateFormat(a_dateFormat),
-					   fieldSeparator(a_fieldSeparator){};
-	} InputStructure;
-	static std::vector<std::vector<std::string>> matrix(TimeSerieTree& a_tree,
-														const InputStructure& a_inputOptions);
-	static std::vector<std::vector<std::string>> serie(TimeSerieTree & a_tree, 
-												const InputStructure & a_inputOptions, 
-												std::function<bool(long, long)> a_progress);
-private:
-	typedef struct DateStruct
-	{
-		int hour;
-		int day;
-		int month;
-		int year;
-	} DateStructure;
-	typedef std::function<void(std::string)> ValueFunction;
-	static void dateFromTreeDepth(DateStructure& a_date, 
-								  const TreeNode& a_node, 
-								  const int& a_depth);
-	static int treeDepthFromPeriodType(const PeriodType& a_periodType);
-};
+    namespace DS
+    {
+        class TimeSerieTreeFormatter
+        {
+        public:
+                /*! InputStructure
+                 *  \param PeriodType (NONE = 0x0000, HOURLY_TYPE  = 0x1111, DAILY_TYPE  = 0x0111, MONTHLY_TYPE  = 0x0011, YEARLY_TYPE  = 0x0001)
+                 *  \param DateFormat - std::string (Examples: dd/mm/yyyy, mm/yyyy, yyyy)
+                 *  \param Field Separator - std::string (Examples: "," "\t")
+                 */
+                using TypeFormatSeparatorInput = std::tuple<PeriodType, string, string>;
+                using MatrixOfString = std::vector<std::vector<std::string>>;
+                using ValueFunction = std::function<void(std::string)>;
+                /*!
+                 * \brief matrix
+                 * \param tree
+                 * \param options
+                 * \return
+                 */
+                /*! To do: is it necessary? */
+//                static MatrixOfString matrix(TimeSerieTree& tree,
+//                                             const Input& options);
+                /*!
+                 * \brief serie
+                 * \param tree
+                 * \param options
+                 * \param progress
+                 * \return
+                 */
+                static MatrixOfString serie(TimeSerieTree& tsTree,
+                                            const TypeFormatSeparatorInput& options,
+                                            std::function<bool(long, long)> progress);
+        private:
+
+                static CDate dateFromTreeDepth(const TreeNode& node,
+                                               const int& depth);
+                static int treeDepthFromPeriodType(const PeriodType& a_periodType);
+        };
+
+    }
+}
 
 #endif /** __TIME_SERIE_TREE_FORMATTER__ **/
