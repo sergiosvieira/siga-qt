@@ -9,42 +9,50 @@ using namespace SIGA::DS;
 
 Describe (StringUtilsTest)
 {
-    It(RemoveSpaceUsingTrimLeft)
+    //Test TRIM
+    It(RemoveSpaceUsingTrim_Left)
     {
         string input(" left");
         StringUtils::trim(input);
         Assert::That(input, Equals("left"));
     }
-    It(RemoveSpaceUsingTrimRight)
+    It(RemoveSpaceUsingTrim_Right)
     {
         string input("right ");
         StringUtils::trim(input);
         Assert::That(input, Equals("right"));
     }
-    It(RemoveSpaceUsingTrimBothLeftRight)
+    It(RemoveSpaceUsingTrim_BothLeftRight)
     {
         string input(" trim ");
         StringUtils::trim(input);
         Assert::That(input, Equals("trim"));
     }
-    It(RemoveSpaceUsingTrimBothBetweenLeftRight)
+    It(RemoveSpaceUsingTrim_BothBetweenLeftRight)
     {
         string input(" trim trim ");
         StringUtils::trim(input);
         Assert::That(input, Equals("trim trim"));
     }
-    It(RemoveSpaceUsingTrimBothBetweenLeft)
+    It(RemoveSpaceUsingTrim_BothBetweenLeft)
     {
         string input("trim trim ");
         StringUtils::trim(input);
         Assert::That(input, Equals("trim trim"));
     }
-    It(RemoveSpaceUsingTrimBothBetweenRight)
+    It(RemoveSpaceUsingTrim_BothBetweenRight)
     {
         string input(" trim trim");
         StringUtils::trim(input);
         Assert::That(input, Equals("trim trim"));
     }
+    It(RemoveSpaceUsingTrim_BothBetweenThree)
+    {
+        string input(" t h r e e ");
+        StringUtils::trim(input);
+        Assert::That(input, Equals("t h r e e"));
+    }
+    //End TRIM
 };
 
 int main(int argc, char** argv)
