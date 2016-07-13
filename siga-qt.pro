@@ -4,7 +4,7 @@
 
 TEMPLATE = lib
 #TARGET = siga-qt
-INCLUDEPATH += .
+INCLUDEPATH += . ../lib/json/include
 CONFIG += c++11
 Release:DESTDIR = build
 Debug:DESTDIR = build
@@ -13,6 +13,8 @@ Debug:DESTDIR = build
 HEADERS += include/data-structures/tree.h \
            include/data-structures/sparse-matrix.h \
            include/data-structures/time-serie-tree.h \
+           include/utils/string-utils.h \
+           include/utils/md5.h \
 #           include/converter/siga-converter.cpp \
            include/parsers/csv_parser.hpp \
            include/date/cdate.h \
@@ -22,6 +24,8 @@ HEADERS += include/data-structures/tree.h \
            include/data-structures/tree-node.h
 
 SOURCES += src/data-structures/time-serie-tree.cpp \
+           src/utils/string-utils.cpp \
+           src/utils/md5.cpp \
 #           src/converter/siga-converter.cpp \
            src/parsers/csv_parser.cpp \
            src/date/cdate.cpp \
