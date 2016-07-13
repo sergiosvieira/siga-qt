@@ -173,7 +173,7 @@ int TimeSerieTree::rowsLength() const
 	return m_rows;
 }
 
-std::vector<std::string> TimeSerieTree::stationLabels() const
+TimeSerieTree::VectorOfString TimeSerieTree::stationLabels() const
 {
 	std::vector<std::string> result;
 	for (const int& stationID: m_stations)
@@ -189,7 +189,7 @@ int TimeSerieTree::stationID(int a_index) const
 	return m_stations.at(a_index);
 }
 
-int TimeSerieTree::yearsLenght() const 
+int TimeSerieTree::numberOfYears() const
 {
 	return m_yearsCounter;
 }
@@ -205,17 +205,6 @@ int TimeSerieTree::size() const
 }
 
 /** Private Methods **/
-
-void TimeSerieTree::updateNodeValue(TreeNode* node,
-                                    const float& value,
-                                    const int& stationIndex)
-{
-    if (node != nullptr)
-	{
-        node->setValue(0, stationIndex, value);
-	}
-}
-
 DayMonthYearNodes TimeSerieTree::nodesFromDate(const CDate& a_date)
 {
     DayMonthYearNodes result;
