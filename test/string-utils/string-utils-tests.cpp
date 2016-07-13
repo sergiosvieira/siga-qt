@@ -10,43 +10,43 @@ using namespace SIGA::DS;
 Describe (StringUtilsTest)
 {
     //Test TRIM
-    It(RemoveSpaceUsingTrim_Left)
+    It(Trim_Left)
     {
         string input(" left");
         StringUtils::trim(input);
         Assert::That(input, Equals("left"));
     }
-    It(RemoveSpaceUsingTrim_Right)
+    It(Trim_Right)
     {
         string input("right ");
         StringUtils::trim(input);
         Assert::That(input, Equals("right"));
     }
-    It(RemoveSpaceUsingTrim_BothLeftRight)
+    It(Trim_BothLeftRight)
     {
         string input(" trim ");
         StringUtils::trim(input);
         Assert::That(input, Equals("trim"));
     }
-    It(RemoveSpaceUsingTrim_BothBetweenLeftRight)
+    It(Trim_BothBetweenLeftRight)
     {
         string input(" trim trim ");
         StringUtils::trim(input);
         Assert::That(input, Equals("trim trim"));
     }
-    It(RemoveSpaceUsingTrim_BothBetweenLeft)
+    It(Trim_BothBetweenLeft)
     {
         string input("trim trim ");
         StringUtils::trim(input);
         Assert::That(input, Equals("trim trim"));
     }
-    It(RemoveSpaceUsingTrim_BothBetweenRight)
+    It(Trim_BothBetweenRight)
     {
         string input(" trim trim");
         StringUtils::trim(input);
         Assert::That(input, Equals("trim trim"));
     }
-    It(RemoveSpaceUsingTrim_BothBetweenThree)
+    It(Trim_BothBetweenThree)
     {
         string input(" t h r e e ");
         StringUtils::trim(input);
@@ -93,6 +93,72 @@ Describe (StringUtilsTest)
         Assert::That(result[1], Equals("second"));
         Assert::That(result[2], Equals("three"));
         Assert::That(result[3], Equals("four"));
+    }
+
+    //Test Replace
+    It(Replace_Single){
+        string input("The quick brown fox jumps over the lazy dog");
+        string from("brown");
+        string to("red");
+
+        bool result = StringUtils::replace(input, from, to);
+
+        Assert::That(result, true);
+        Assert::That(input, Equals("The quick red fox jumps over the lazy dog"));
+    }
+    It(Replace_ReplaceTextNotFound)
+    {
+        string input("The quick brown fox jumps over the lazy dog");
+        string from("red");
+        string to("brow");
+
+        bool result = StringUtils::replace(input, from, to);
+
+        Assert::That(result, true);
+        Assert::That(input, Equals("The quick red fox jumps over the lazy dog"));
+    }
+    It(Replace_TwoReplacements)
+    {
+        string input("The quick brown fox jumps over the quick dog");
+        string from("quick");
+        string to("lazy");
+
+        bool result = StringUtils::replace(input, from, to);
+
+        Assert::That(result, true);
+        Assert::That(input, Equals("The lazy brown fox jumps over the lazy dog"));
+    }
+
+    //Test CreateLayername
+    It(CreateLayername)
+    {
+        std::string input("shapefile.shp");
+        std::string result;
+
+        StringUtils::createsLayerName(result, input.c_str());
+
+        Assert::That(result, "shapefile_layer");
+    }
+
+    //Normalizer Text
+    It(NormalizeLowercase)
+    {
+        std::string input("âàáãäêèéëîìíïôòóõöûùúüç");
+        std::string result;
+
+        StringUtils::normalize(result, input);
+
+        Assert::That(result, "aaaaaeeeeiiiiooooouuuuc");
+    }
+    It(NormalizeUppercase)
+    {
+        std::string input("ÂÀÁÃÄÊÈÉËÎÌÍÏÔÒÒÔÖÛÙÚÜÇ");
+        std::string result;
+
+        StringUtils::normalize(result, input);
+
+        Assert::That(result, "AAAAAEEEEIIIIOOOOOUUUUC");
+
     }
 
 };
