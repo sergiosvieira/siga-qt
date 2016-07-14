@@ -1,5 +1,7 @@
 #include "../../include/converter/converter-options.h"
 
+using namespace SIGA;
+
 Range ConverterOptions::rowRange() const
 {
     return m_rowRange;

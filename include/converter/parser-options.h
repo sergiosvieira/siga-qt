@@ -6,58 +6,62 @@
 
 using namespace std;
 
-/*!
- * \brief The ParserOptions class
- */
-class ParserOptions
+namespace SIGA
 {
-public:
     /*!
-     * \brief comments Symbol
-     * \return
+     * \brief The ParserOptions class
      */
-    vector<string> commentsSymbol() const;
-    /*!
-     * \brief set Comments Symbol
-     * \param commentsSymbol
-     */
-    void setCommentsSymbol(const vector<string> commentsSymbol);
-    /*!
-     * \brief skip Lines
-     * \return
-     */
-    int skipLines() const;
-    /*!
-     * \brief set Skip Lines
-     * \param skipLines
-     */
-    void setSkipLines(int skipLines);
-    /*!
-     * \brief text Delimiter
-     * \return
-     */
-    string textDelimiter() const;
-    /*!
-     * \brief set Text Delimiter
-     * \param textDelimiter
-     */
-    void setTextDelimiter(const string &textDelimiter);
-    /*!
-     * \brief field Separator
-     * \return
-     */
-    string fieldSeparator() const;
-    /*!
-     * \brief set Field Separator
-     * \param fieldSeparator
-     */
-    void setFieldSeparator(const string &fieldSeparator);
-protected:
-    vector<string> m_commentsSymbol = vector<string>{"#"};
-    string m_textDelimiter = "\"";
-    string m_fieldSeparator = ",";
-    int m_skipLines = 0;
-private:
-};
+    class ParserOptions
+    {
+    public:
+        ParserOptions(){};
+        /*!
+         * \brief comments Symbol
+         * \return
+         */
+        vector<string> commentsSymbol() const;
+        /*!
+         * \brief set Comments Symbol
+         * \param commentsSymbol
+         */
+        void setCommentsSymbol(const vector<string> commentsSymbol);
+        /*!
+         * \brief skip Lines
+         * \return
+         */
+        int skipLines() const;
+        /*!
+         * \brief set Skip Lines
+         * \param skipLines
+         */
+        void setSkipLines(int skipLines);
+        /*!
+         * \brief text Delimiter
+         * \return
+         */
+        string textDelimiter() const;
+        /*!
+         * \brief set Text Delimiter
+         * \param textDelimiter
+         */
+        void setTextDelimiter(const string &textDelimiter);
+        /*!
+         * \brief field Separator
+         * \return
+         */
+        string fieldSeparator() const;
+        /*!
+         * \brief set Field Separator
+         * \param fieldSeparator
+         */
+        void setFieldSeparator(const string &fieldSeparator);
+    protected:
+        vector<string> m_commentsSymbol = vector<string>{"#"};
+        string m_textDelimiter = "\"";
+        string m_fieldSeparator = ",";
+        int m_skipLines = 0;
+    private:
+    };
+}
 
 #endif // __PARSER_OPTIONS__

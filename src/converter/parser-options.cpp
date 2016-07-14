@@ -1,5 +1,7 @@
 #include "../../include/converter/parser-options.h"
 
+using namespace SIGA;
+
 vector<string> ParserOptions::commentsSymbol() const
 {
     return m_commentsSymbol;

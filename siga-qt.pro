@@ -18,7 +18,9 @@ HEADERS += include/data-structures/btree.h \
            include/utils/string-utils.h \
            include/utils/md5.h \
            include/utils/filesystem.h \
-           include/converter/siga-converter.cpp \
+           include/converter/converter.h \
+           include/converter/converter-options.h \
+           include/converter/parser-options.h \
            include/parsers/csv_parser.hpp \
            include/date/cdate.h \
            include/date/cdatecalc.h \
@@ -32,7 +34,9 @@ SOURCES += src/data-structures/time-serie-tree.cpp \
            src/utils/string-utils.cpp \
            src/utils/md5.cpp \
            src/utils/filesystem.cpp \
-           src/converter/siga-converter.cpp \
+           src/converter/converter.cpp \
+           src/converter/converter-options.cpp \
+           src/converter/parser-options.cpp \
            src/parsers/csv_parser.cpp \
            src/date/cdate.cpp \
            src/date/cdatecalc.cpp \
